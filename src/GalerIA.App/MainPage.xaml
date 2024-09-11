@@ -7,7 +7,13 @@
         <Grid Margin="20">
             <ScrollView Grid.Row="0">
                 <FlexLayout Wrap="Wrap" JustifyContent="SpaceAround" AlignItems="Center" Padding="10">
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
+                    <!-- <Grid WidthRequest="150">
+                        <Image Source="dotnet_bot.png" WidthRequest="150" />
+                        <Grid VerticalOptions="End" HorizontalOptions="End" Margin="5">
+                            <Image Source="star.png" WidthRequest="10"></Image>
+                            <Label Text="3" FontSize="14" />
+                        </Grid>
+                    </Grid> -->
                     <Image Source="dotnet_bot.png" WidthRequest="150" />
                     <Image Source="dotnet_bot.png" WidthRequest="150" />
                     <Image Source="dotnet_bot.png" WidthRequest="150" />
@@ -27,7 +33,7 @@
                     <Image Source="dotnet_bot.png" WidthRequest="150" />
                 </FlexLayout>
             </ScrollView>
-            <Button Grid.Row="1" Text="Nova image"/>
+            <Button Grid.Row="1" Text="Nova image" Clicked="OnNewImageClicked" />
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
