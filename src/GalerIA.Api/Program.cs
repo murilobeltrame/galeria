@@ -1,6 +1,7 @@
 using Azure;
 using Azure.AI.OpenAI;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,8 +81,24 @@ app.MapPost("/gallery", async (AddToGalleryRequest request, BlobServiceClient bl
 .WithName("StoreImage")
 .WithOpenApi();
 
+app.MapGet("/gallery", async (BlobServiceClient blobServiceClient) =>
+{
+    var containerClient = blobServiceClient.GetBlobContainerClient("gallery");
+    var images = new List<GalleryImage>();
+
+    await foreach (BlobItem blobItem in containerClient.GetBlobsAsync())
+    {
+        var blobClient = containerClient.GetBlobClient(blobItem.Name);
+        images.Add(new GalleryImage(blobItem.Name, blobClient.Uri.ToString()));
+    }
+
+    return Results.Ok(images);
+})
+.WithName("ListGalleryImages")
+.WithOpenApi();
+
 await app.RunAsync();
 
 record CreateImageRequest (string Prompt);
-
 record AddToGalleryRequest(string Url);
+record GalleryImage(string Name, string Url);
