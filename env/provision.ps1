@@ -38,9 +38,12 @@ az storage account create --name $storageAccountName --resource-group $ResourceG
 # Get storage account connection string
 $storageConnectionString = $(az storage account show-connection-string --name $storageAccountName --resource-group $ResourceGroupName --query connectionString -o tsv)
 
-# Create Blob container
-Write-Host "Creating Blob container: $containerName"
-az storage container create --name $containerName --connection-string $storageConnectionString
+# Create Blob container with public access level set to "blob"
+Write-Host "Creating Blob container: $containerName with public read access for blobs"
+az storage container create --name $containerName --connection-string $storageConnectionString --public-access blob
+
+# Get the storage account's blob service URL
+$blobServiceUrl = "https://$storageAccountName.blob.core.windows.net"
 
 # Output configuration values
 Write-Host "`nConfiguration values for appsettings.json:"
@@ -48,5 +51,9 @@ Write-Host "AzureOpenAI:Endpoint: $openAiEndpoint"
 Write-Host "AzureOpenAI:ApiKey: $openAiKey"
 Write-Host "AzureOpenAI:DeploymentName: $deploymentName"
 Write-Host "AzureBlobStorage:ConnectionString: $storageConnectionString"
+Write-Host "AzureBlobStorage:BlobServiceUrl: $blobServiceUrl"
 
 Write-Host "`nProvisioning completed successfully."
+Write-Host "Note: The 'gallery' container is now publicly readable. Blobs can be accessed directly from the internet using the URL format:"
+Write-Host "$blobServiceUrl/$containerName/[BlobName]"
+Write-Host "Ensure that you don't store sensitive information in this container."
