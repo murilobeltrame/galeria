@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GalerIA.App.Pages.NewImagePage"
+             Title="NewImagePage">
+    <VerticalStackLayout Padding="20" Spacing="10">
+        <Entry x:Name="Prompt" 
+            Placeholder="Descreva um cenário aqui ..." 
+            TextChanged="OnPromptEntryTextChanged" />
+        <Button x:Name="GenerateImageButton" 
+            Text="Gerar" 
+            IsEnabled="False"
+            Clicked="OnGenerateImageClicked" />
+        <Image x:Name="ImagePreview" />
+        <Button x:Name="AddToGalleryButton" 
+            Text="Adicionar à galeria" 
+            IsEnabled="False"
+            Clicked="OnAddToGalleryClicked" />
+    </VerticalStackLayout>
+</ContentPage>
