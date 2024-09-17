@@ -11,6 +11,8 @@ $openAiName = "$ResourceGroupName-openai"
 $storageAccountName = "$($ResourceGroupName -replace '-', '')storage"
 $containerName = "gallery"
 $deploymentName = "dall-e-3"
+$appServicePlanName = "$ResourceGroupName-plan"
+$webAppName = "$ResourceGroupName-api"
 
 # Login to Azure (uncomment if not already logged in)
 # az login
@@ -45,15 +47,33 @@ az storage container create --name $containerName --connection-string $storageCo
 # Get the storage account's blob service URL
 $blobServiceUrl = "https://$storageAccountName.blob.core.windows.net"
 
+# Create App Service Plan (Linux)
+Write-Host "Creating App Service Plan: $appServicePlanName"
+az appservice plan create --name $appServicePlanName --resource-group $ResourceGroupName --location $Location --sku B1 --is-linux
+
+# Create Web App (.NET 8 on Linux)
+Write-Host "Creating Web App: $webAppName"
+az webapp create --name $webAppName --resource-group $ResourceGroupName --plan $appServicePlanName --runtime "DOTNETCORE:8.0"
+
+# Configure Web App settings
+Write-Host "Configuring Web App settings"
+az webapp config appsettings set --name $webAppName --resource-group $ResourceGroupName --settings "AzureOpenAI:Endpoint=$openAiEndpoint" "AzureOpenAI:ApiKey=$openAiKey" "AzureOpenAI:DeploymentName=$deploymentName" "AzureBlobStorage:ConnectionString=$storageConnectionString" "AzureBlobStorage:BlobServiceUrl=$blobServiceUrl"
+
 # Output configuration values
-Write-Host "`nConfiguration values for appsettings.json:"
+Write-Host "`nConfiguration values:"
 Write-Host "AzureOpenAI:Endpoint: $openAiEndpoint"
 Write-Host "AzureOpenAI:ApiKey: $openAiKey"
 Write-Host "AzureOpenAI:DeploymentName: $deploymentName"
 Write-Host "AzureBlobStorage:ConnectionString: $storageConnectionString"
 Write-Host "AzureBlobStorage:BlobServiceUrl: $blobServiceUrl"
+Write-Host "Web App Name: $webAppName"
+Write-Host "Web App URL: https://$webAppName.azurewebsites.net"
 
 Write-Host "`nProvisioning completed successfully."
 Write-Host "Note: The 'gallery' container is now publicly readable. Blobs can be accessed directly from the internet using the URL format:"
 Write-Host "$blobServiceUrl/$containerName/[BlobName]"
 Write-Host "Ensure that you don't store sensitive information in this container."
+
+Write-Host "`nTo deploy your API to the Web App, use the deploy-api.ps1 script:"
+Write-Host ".\deploy-api.ps1 -ResourceGroupName $ResourceGroupName -WebAppName $webAppName -ProjectPath path/to/your/api/project"
+Write-Host "Make sure to replace 'path/to/your/api/project' with the actual path to your API project."
