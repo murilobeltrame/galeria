@@ -1,4 +1,4 @@
-﻿using GalerIA.App.Pages;
+using GalerIA.App.Pages;
 
 namespace GalerIA.App;
 
@@ -12,5 +12,6 @@ public partial class MainPage : ContentPage
     private async void OnNewImageClicked(object sender, EventArgs e) {
         await Navigation.PushAsync(new NewImagePage());
     }
+
 }
 
