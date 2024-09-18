@@ -25,7 +25,7 @@ builder.Services.AddSingleton(sp =>
 builder.Services.AddSingleton(sp =>
 {
     var config = sp.GetRequiredService<IConfiguration>();
-    var connectionString = config["AzureBlobStorage:ConnectionString"];
+    var connectionString = config.GetConnectionString("AzureBlobStorage") ;
 
     return string.IsNullOrEmpty(connectionString)
         ? throw new InvalidOperationException("Azure Blob Storage configuration is missing or invalid.")
@@ -41,7 +41,7 @@ app.UseHttpsRedirection();
 
 app.MapPost("/images", async (CreateImageRequest request, OpenAIClient client, IConfiguration config) =>
 {
-    var prompt = $"capiara in a ${request.Prompt}, cartoon style";
+    var prompt = $"capybara in a ${request.Prompt}, cartoon style";
 
     var deploymentName = config["AzureOpenAI:DeploymentName"];
     if (string.IsNullOrEmpty(deploymentName))
