@@ -7,26 +7,15 @@ namespace GalerIA.App.Pages;
 public partial class NewImagePage : ContentPage
 {
     private readonly HttpClient _httpClient;
-    private readonly string _apiBaseUrl;
+    private string _generatedImageUrl;
 
     public NewImagePage()
     {
         InitializeComponent();
-        _httpClient = new HttpClient();
-        
-        // Set the API base URL based on the current device/platform
-        _apiBaseUrl = DeviceInfo.Platform == DevicePlatform.Android
-            ? "http://10.0.2.2:7033" // Android emulator
-            : "http://localhost:7033"; // Windows, macOS, or iOS simulator
-        
-        #if DEBUG
-        if (DeviceInfo.DeviceType == DeviceType.Physical)
+        _httpClient = new HttpClient
         {
-            // For physical devices, use your computer's IP address
-            _apiBaseUrl = "http://YOUR_COMPUTER_IP:7033";
-            // TODO: Replace YOUR_COMPUTER_IP with your actual IP address when debugging on a physical device
-        }
-        #endif
+            BaseAddress = new Uri("https://mbc-galeria-2-api.azurewebsites.net/")
+        };
     }
 
     private void OnPromptEntryTextChanged(object sender, TextChangedEventArgs e)
@@ -43,11 +32,12 @@ public partial class NewImagePage : ContentPage
         }
 
         GenerateImageButton.IsEnabled = false;
-        string imageUrl = await GenerateImage(Prompt.Text);
+        AddToGalleryButton.IsEnabled = false;
+        _generatedImageUrl = await GenerateImage(Prompt.Text);
         
-        if (!string.IsNullOrEmpty(imageUrl))
+        if (!string.IsNullOrEmpty(_generatedImageUrl))
         {
-            ImagePreview.Source = imageUrl;
+            ImagePreview.Source = _generatedImageUrl;
             AddToGalleryButton.IsEnabled = true;
         }
         else
@@ -62,7 +52,7 @@ public partial class NewImagePage : ContentPage
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync($"{_apiBaseUrl}/images", new { prompt });
+            var response = await _httpClient.PostAsJsonAsync("images", new { prompt });
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             var responseObject = JsonSerializer.Deserialize<JsonElement>(content);
@@ -77,6 +67,27 @@ public partial class NewImagePage : ContentPage
 
     private async void OnAddToGalleryClicked(object sender, EventArgs e)
     {
-        await Navigation.PopAsync();
+        if (!string.IsNullOrEmpty(_generatedImageUrl))
+        {
+            await AddToGallery(_generatedImageUrl);
+            await Navigation.PopAsync();
+        }
+        else
+        {
+            await DisplayAlert("Error", "Failed to add image to gallery", "OK");
+        }
+    }
+
+    private async Task AddToGallery(string url)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("gallery", new { url });
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
+        }
     }
 }

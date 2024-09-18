@@ -3,40 +3,41 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GalerIA.App.MainPage">
     
-        <Grid Margin="20">
-            <ScrollView Grid.Row="0">
-                <FlexLayout Wrap="Wrap" JustifyContent="SpaceAround" AlignItems="Center" Padding="10">
-                    <!-- <Grid WidthRequest="150">
-                        <Image Source="dotnet_bot.png" WidthRequest="150" />
-                        <Grid VerticalOptions="End" HorizontalOptions="End" Margin="5">
-                            <Image Source="star.png" WidthRequest="10"></Image>
-                            <Label Text="3" FontSize="14" />
-                        </Grid>
-                    </Grid> -->
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                    <Image Source="dotnet_bot.png" WidthRequest="150" />
-                </FlexLayout>
-            </ScrollView>
-            <Button Grid.Row="1" Text="Nova image" Clicked="OnNewImageClicked" />
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-        </Grid>    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <CollectionView x:Name="ImagesCollection" Grid.Row="0"
+                        ItemsSource="{Binding Images}"
+                        EmptyView="No images available.">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical"
+                                 Span="3"
+                                 VerticalItemSpacing="10"
+                                 HorizontalItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Image Source="{Binding Url}" 
+                           Aspect="AspectFill"
+                           HeightRequest="150"
+                           WidthRequest="150" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Label x:Name="NoContentLabel"
+               Text="No images available."
+               IsVisible="False"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               Grid.Row="0" />
+
+        <Button Grid.Row="1" 
+                Text="Nova image" 
+                Clicked="OnNewImageClicked" />
+    </Grid>
 
 </ContentPage>
