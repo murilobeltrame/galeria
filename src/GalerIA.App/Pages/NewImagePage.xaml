@@ -5,16 +5,13 @@
              Title="NewImagePage">
     <VerticalStackLayout Padding="20" Spacing="10">
         <Entry x:Name="Prompt" 
-            Placeholder="Descreva um cenário aqui ..." 
-            TextChanged="OnPromptEntryTextChanged" />
+            Placeholder="Descreva um cenário aqui ..." />
         <Button x:Name="GenerateImageButton" 
             Text="Gerar" 
-            IsEnabled="False"
-            Clicked="OnGenerateImageClicked" />
+            IsEnabled="False" />
         <Image x:Name="ImagePreview" />
         <Button x:Name="AddToGalleryButton" 
             Text="Adicionar à galeria" 
-            IsEnabled="False"
-            Clicked="OnAddToGalleryClicked" />
+            IsEnabled="False" />
     </VerticalStackLayout>
 </ContentPage>
